@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <Button
+        android:id="@+id/button7thChord"
+        android:layout_width="118dp"
+        android:layout_height="35dp"
+        android:layout_marginStart="68dp"
+        android:layout_marginTop="8dp"
+        android:text="Record"
+        app:layout_constraintStart_toEndOf="@+id/buttonMinorChord"
+        app:layout_constraintTop_toBottomOf="@+id/radioGroup2" />
+
+    <Button
+        android:id="@+id/buttonMinorChord"
+        android:layout_width="118dp"
+        android:layout_height="35dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="8dp"
+        android:text="Record"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/radioGroupMinorChords" />
+
+    <Button
+        android:id="@+id/buttonMajorChords"
+        android:layout_width="118dp"
+        android:layout_height="35dp"
+        android:layout_marginStart="76dp"
+        android:layout_marginTop="8dp"
+        android:text="Record"
+        app:layout_constraintStart_toEndOf="@+id/buttonNote"
+        app:layout_constraintTop_toBottomOf="@+id/radioGroupMajorChords" />
+
+    <RadioGroup
+        android:id="@+id/radioGroupNotes"
+        android:layout_width="115dp"
+        android:layout_height="245dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="12dp"
+        android:baselineAligned="false"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView">
+
+        <RadioButton
+            android:id="@+id/radioButtonCLow"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:text="C (low)" />
+
+        <RadioButton
+            android:id="@+id/radioButtonD"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:text="D" />
+
+        <RadioButton
+            android:id="@+id/radioButtonE"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:text="E" />
+
+        <RadioButton
+            android:id="@+id/radioButtonF"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:text="F" />
+
+        <RadioButton
+            android:id="@+id/radioButtonG"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:text="G" />
+
+        <RadioButton
+            android:id="@+id/radioButtonA"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:text="A" />
+
+        <RadioButton
+            android:id="@+id/radioButtonB"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:text="B" />
+
+        <RadioButton
+            android:id="@+id/radioButtonCHigh"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:text="C (high)" />
+
+    </RadioGroup>
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="16dp"
+        android:text="SingleNotes"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="120dp"
+        android:layout_marginTop="16dp"
+        android:text="Major Chords"
+        app:layout_constraintStart_toEndOf="@+id/textView"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/buttonNote"
+        android:layout_width="118dp"
+        android:layout_height="35dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="8dp"
+        android:text="Record"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/radioGroupNotes" />
+
+    <RadioGroup
+        android:id="@+id/radioGroupMajorChords"
+        android:layout_width="115dp"
+        android:layout_height="245dp"
+        android:layout_marginStart="80dp"
+        android:layout_marginTop="12dp"
+        app:layout_constraintStart_toEndOf="@+id/radioGroupNotes"
+        app:layout_constraintTop_toBottomOf="@+id/textView2">
+
+        <RadioButton
+            android:id="@+id/radioButtonCMajor"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:text="C" />
+
+        <RadioButton
+            android:id="@+id/radioButtonDMajor"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:text="D" />
+
+        <RadioButton
+            android:id="@+id/radioButtonEMajor"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:text="E" />
+
+        <RadioButton
+            android:id="@+id/radioButtonFMajor"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:text="F" />
+
+        <RadioButton
+            android:id="@+id/radioButtonGMajor"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:text="G" />
+
+        <RadioButton
+            android:id="@+id/radioButtonAMajor"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:text="A" />
+
+        <RadioButton
+            android:id="@+id/radioButtonBFlatMajor"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:text="B flat" />
+
+        <RadioButton
+            android:id="@+id/radioButtonBMajor"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:text="B" />
+    </RadioGroup>
+
+    <RadioGroup
+        android:id="@+id/radioGroupMinorChords"
+        android:layout_width="115dp"
+        android:layout_height="245dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="12dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView3">
+
+        <RadioButton
+            android:id="@+id/radioCMinor"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:text="Cm" />
+
+        <RadioButton
+            android:id="@+id/radioButtonDMinor"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:text="Dm" />
+
+        <RadioButton
+            android:id="@+id/radioButtonEMinor"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:text="Em" />
+
+        <RadioButton
+            android:id="@+id/radioButtonFMinor"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:text="Fm" />
+
+        <RadioButton
+            android:id="@+id/radioButtonGMinor"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:text="Gm" />
+
+        <RadioButton
+            android:id="@+id/radioButtonAMinor"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:text="Am" />
+
+        <RadioButton
+            android:id="@+id/radioButtonBFlatMinor"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:text="Bm flat" />
+
+        <RadioButton
+            android:id="@+id/radioButtonBMinor"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:text="Bm" />
+    </RadioGroup>
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="20dp"
+        android:text="Minor Chords"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buttonNote" />
+
+    <RadioGroup
+        android:id="@+id/radioGroup2"
+        android:layout_width="115dp"
+        android:layout_height="245dp"
+        android:layout_marginStart="76dp"
+        android:layout_marginTop="12dp"
+        app:layout_constraintStart_toEndOf="@+id/radioGroupMinorChords"
+        app:layout_constraintTop_toBottomOf="@+id/textView4">
+
+        <RadioButton
+            android:id="@+id/radioButtonC7"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:text="C7" />
+
+        <RadioButton
+            android:id="@+id/radioButtonD7"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:text="D7" />
+
+        <RadioButton
+            android:id="@+id/radioButtonE7"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:text="E7" />
+
+        <RadioButton
+            android:id="@+id/radioButtonF7"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:text="F7" />
+
+        <RadioButton
+            android:id="@+id/radioButtonG7"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:text="G7" />
+
+        <RadioButton
+            android:id="@+id/radioButtonA7"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:text="A7" />
+
+        <RadioButton
+            android:id="@+id/radioButtonB7Flat"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:text="B7 flat" />
+
+        <RadioButton
+            android:id="@+id/radioButtonB7"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:text="B7" />
+    </RadioGroup>
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="108dp"
+        android:layout_marginTop="20dp"
+        android:text="7th Chords"
+        app:layout_constraintStart_toEndOf="@+id/textView3"
+        app:layout_constraintTop_toBottomOf="@+id/buttonMajorChords" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

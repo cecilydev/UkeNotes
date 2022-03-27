@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "176681565534",
+    "project_id": "ukenotes-data-collection",
+    "storage_bucket": "ukenotes-data-collection.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:176681565534:android:8a45a0b2d18cc7f115a3cf",
+        "android_client_info": {
+          "package_name": "edu.temple.ukenotesdatacollection"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "176681565534-17ti2q6rvbp8ha9039imug6gugll23s1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAMPVG4-_IWAn-oNXEsC5TIHoyqIozQWIU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "176681565534-17ti2q6rvbp8ha9039imug6gugll23s1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
