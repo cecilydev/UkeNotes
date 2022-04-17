@@ -47,6 +47,7 @@ class MainActivity : AppCompatActivity() {
         //recorder = AudioRecord(audioSource, samplingRate, channelConfig, audioFormat, bufferSize)
 
         findViewById<Button>(R.id.recordButton).setOnClickListener {
+            text.text = ""
             recorder = AudioRecord(audioSource, samplingRate, channelConfig, audioFormat, bufferSize)
             isRecording = true
             recorder?.startRecording()
@@ -60,6 +61,7 @@ class MainActivity : AppCompatActivity() {
             recorder?.release()
             recorder = null
             recordingThread = null
+            newArray.clear()
         }
 
     }
@@ -109,7 +111,8 @@ class MainActivity : AppCompatActivity() {
         Log.d("time?", (((finalShortArray.size.toFloat()*2)/samplingRate.toFloat())).toString())*/
 
         val f = get_dom_freq(finalShortArray)
-        (f.toString() + "Hz").also { text.text = it }
+        note_classifier(f)
+        //(f.toString() + "Hz").also { text.text = it }
 
     }
 
@@ -130,8 +133,8 @@ class MainActivity : AppCompatActivity() {
         val m = out.maxOrNull()
         if (m!=null){
             val freq = freqs[out.indexOfFirst { it == m }]
-            Log.d("Freq", freq.toString())
             val freq_hertz = abs(freq*samplingRate)
+            Log.d("freq_hertz", freq_hertz.toString())
             return freq_hertz
         } else{
             return -1.0
@@ -155,5 +158,38 @@ class MainActivity : AppCompatActivity() {
             it*value
         }
         return output.toDoubleArray()
+    }
+
+    //classify notes --- need to clean up, binary decision tree?
+    private fun note_classifier(freq: Double){
+        if (freq>=370) {
+            if (freq >= 465) {
+                if (freq >= 480 && freq <= 540) {
+                    text.text = "C"
+                } else {
+                    text.text = "B"
+                }
+            } else {
+                if (freq>= 416){
+                    text.text = "A"
+                } else {
+                    text.text = "G"
+                }
+            }
+        } else {
+            if (freq>=312){
+                if(freq>=339){
+                    text.text = "F"
+                } else {
+                    text.text = "E"
+                }
+            } else {
+                if (freq>=250 && freq<276){
+                    text.text= "C"
+                } else {
+                    text.text = "D"
+                }
+            }
+        }
     }
 }
