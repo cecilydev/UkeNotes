@@ -1,6 +1,7 @@
 package edu.temple.ukenotes
 
 import android.Manifest
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.media.AudioFormat
 import android.media.AudioRecord
@@ -12,6 +13,8 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.github.psambit9791.jdsp.transform.*
 import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.FileOutputStream
 import java.lang.Math.abs
 
 
@@ -29,6 +32,10 @@ class MainActivity : AppCompatActivity() {
     //val audioShortArray = ShortArray(bufferSize/4)
     val newArray = mutableListOf<Short>()
     lateinit var text: TextView
+    var buffCount = 0
+    private lateinit var preferences: SharedPreferences
+    private val internalFilename = "my_file"
+    private lateinit var file: File
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,6 +49,8 @@ class MainActivity : AppCompatActivity() {
             )
         }
 
+        preferences = getPreferences(MODE_PRIVATE)
+        file = File(filesDir, internalFilename)
         Log.d("BUFFER SIZE", bufferSize.toString())
         text = findViewById(R.id.textView)
         //recorder = AudioRecord(audioSource, samplingRate, channelConfig, audioFormat, bufferSize)
@@ -55,7 +64,7 @@ class MainActivity : AppCompatActivity() {
             recordingThread?.start()
         }
 
-        findViewById<Button>(R.id.stopButton).setOnClickListener {
+       findViewById<Button>(R.id.stopButton).setOnClickListener {
             isRecording = false
             recorder?.stop()
             recorder?.release()
@@ -81,15 +90,37 @@ class MainActivity : AppCompatActivity() {
        // val baos = ByteArrayOutputStream()
         //val data = ByteArray(bufferSize/2)
         val shData = ShortArray(bufferSize/4)
+       // val outputStream = FileOutputStream(file)
         while(isRecording){
             //val read = recorder?.read(data, 0, data.size)
             val readSh = recorder?.read(shData, 0, shData.size)
            // if (read != null) baos.write(data, 0, read)
             val outdata = shData.toMutableList()
-            if (readSh!=null) newArray.addAll(outdata)
+            if (readSh!=null) {
+                newArray.addAll(outdata)
+                buffCount += shData.size
+                if (buffCount == shData.size*8){
+                    val f = get_dom_freq(newArray.toShortArray())
+                    note_classifierTWO(f)
+                    //Log.d("freq", f.toString())
+                    newArray.clear()
+                    buffCount=0
+                }
+                //val avg = shData.average()
+           /*     Log.d("RECORD", ("${(((buffCount.toFloat() * 2) / samplingRate.toFloat())).toString()}, ${avg.toString()}"))
+                //Log.d("time", (((buffCount.toFloat() * 2) / samplingRate.toFloat())).toString())
+                //Log.d("avg", avg.toString())
+                try {
+                    outputStream.write(("${(((buffCount.toFloat() * 2) / samplingRate.toFloat())).toString()}, ${avg.toString()}\n").toByteArray())
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }*/
+
+            }
         }
         //audioByteArray = baos.toByteArray()
         val finalShortArray = newArray.toShortArray()
+      //  outputStream.close()
       /*  val new = finalShortArray[0].toDouble()
         Log.d("finalShortArray[0] as short", finalShortArray[0].toString())
         Log.d("finalShortArray[0] as double", new.toString())
@@ -190,6 +221,49 @@ class MainActivity : AppCompatActivity() {
                     text.text = "D"
                 }
             }
+        }
+    }
+
+
+    private fun note_classifierTWO(freq: Double){
+        if (freq>=388.13){
+            if (freq in 388.13..404.13){
+                text.text="G"
+            }
+            else if (freq in 430.88..446.88){
+                text.text="A"
+            }
+            else if (freq in 489.34..505.34){
+                text.text="B"
+            }
+            else if(freq in 517.46..533.46){
+                text.text="C"
+            } else {
+                text.text=""
+            }
+
+        }
+        else{
+            if (freq>=254.12){
+                if (freq in 254.12..270.14){
+                    text.text="C"
+                }
+                else if (freq in 290.14..306.14){
+                    text.text="D"
+                }
+                else if (freq in 321.55..337.55){
+                    text.text="E"
+                }
+                else if (freq in 344.99..364.00){
+                    text.text="F"
+                }
+                else {
+                    text.text=""
+                }
+            } else {
+                text.text=""
+            }
+
         }
     }
 }
