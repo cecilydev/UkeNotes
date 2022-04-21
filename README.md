@@ -10,3 +10,8 @@ While the audio stream is being recorded, the data is read in and filtered (with
 Once the user has completed recording, the time series audio data is analyzed to find spikes that have a steep left side of the peak -- this indicates that a ukulele string was plucked.  The time of these events is matched to the previsouly tracked notes, and a list of notes played by the user is displayed.
 
 ### Original Data Collection and Analysis
+Originally, an application was created to collect notes (and chords in the future). The recordings were stored as wav files, and uploaded to Firebase Storage, for later analysis.           
+[Folder with data collection app](https://github.com/cecilydev/UkeNotes/tree/main/UkeNotesDataCollection)
+
+Further analysis was done using Jupyter Notebooks available through Google Colab, with some python libraries. In particular, Librosa was used to review spectrograms and some other analysis.        
+[Folder with Jupyter Notebooks](https://github.com/cecilydev/UkeNotes/tree/main/Model)
