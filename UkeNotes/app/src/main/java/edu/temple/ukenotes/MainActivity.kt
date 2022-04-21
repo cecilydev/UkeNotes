@@ -1,7 +1,6 @@
 package edu.temple.ukenotes
 
 import android.Manifest
-import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.media.AudioFormat
 import android.media.AudioRecord
@@ -11,10 +10,12 @@ import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import com.github.psambit9791.jdsp.transform.*
-import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.FileOutputStream
+import com.github.psambit9791.jdsp.filter.Butterworth
+import com.github.psambit9791.jdsp.signal.peaks.FindPeak
+import com.github.psambit9791.jdsp.signal.peaks.Peak
+import com.github.psambit9791.jdsp.signal.peaks.Spike
+import com.github.psambit9791.jdsp.transform.FastFourier
+import com.github.psambit9791.jdsp.transform._Fourier
 import java.lang.Math.abs
 
 
@@ -28,14 +29,12 @@ class MainActivity : AppCompatActivity() {
     var recorder: AudioRecord? = null
     var isRecording = false
     var recordingThread: Thread? = null
-    var audioByteArray: ByteArray? = null
-    //val audioShortArray = ShortArray(bufferSize/4)
-    val newArray = mutableListOf<Short>()
+    val shortAudioDataArray = mutableListOf<Short>()
+    val noteArray = mutableListOf<String>()
     lateinit var text: TextView
+    lateinit var notesText: TextView
     var buffCount = 0
-    private lateinit var preferences: SharedPreferences
-    private val internalFilename = "my_file"
-    private lateinit var file: File
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,123 +48,92 @@ class MainActivity : AppCompatActivity() {
             )
         }
 
-        preferences = getPreferences(MODE_PRIVATE)
-        file = File(filesDir, internalFilename)
-        Log.d("BUFFER SIZE", bufferSize.toString())
         text = findViewById(R.id.textView)
-        //recorder = AudioRecord(audioSource, samplingRate, channelConfig, audioFormat, bufferSize)
+        notesText = findViewById(R.id.textView2)
 
         findViewById<Button>(R.id.recordButton).setOnClickListener {
             text.text = ""
             recorder = AudioRecord(audioSource, samplingRate, channelConfig, audioFormat, bufferSize)
             isRecording = true
             recorder?.startRecording()
-            recordingThread = Thread({ writeToVar() }, "AudioRecorder Thread")
+            recordingThread = Thread({ writeAudioData() }, "AudioRecorder Thread")
             recordingThread?.start()
         }
 
        findViewById<Button>(R.id.stopButton).setOnClickListener {
-            isRecording = false
-            recorder?.stop()
-            recorder?.release()
-            recorder = null
-            recordingThread = null
-            newArray.clear()
+           isRecording = false
+           recorder?.stop()
+           recorder?.release()
+           recorder = null
+           recordingThread = null
         }
 
     }
 
-
-    private fun writeAudioData(){
-        val data = ByteArray(bufferSize / 2)
-        while(isRecording){
-            val read = recorder?.read(data, 0, data.size)
-            Log.d("data", data.contentToString())
-            Log.d("read", read.toString())
-        }
-    }
 
     //DATA COLLECTION - READ IN DATA INTO SHORT ARRAY
-    private fun writeToVar(){
-       // val baos = ByteArrayOutputStream()
-        //val data = ByteArray(bufferSize/2)
+    private fun writeAudioData(){
+        val tempArray = mutableListOf<Short>()
+        val avgArray = mutableListOf<Double>()
         val shData = ShortArray(bufferSize/4)
-       // val outputStream = FileOutputStream(file)
         while(isRecording){
-            //val read = recorder?.read(data, 0, data.size)
             val readSh = recorder?.read(shData, 0, shData.size)
-           // if (read != null) baos.write(data, 0, read)
             val outdata = shData.toMutableList()
             if (readSh!=null) {
-                newArray.addAll(outdata)
+                shortAudioDataArray.addAll(outdata)
+                tempArray.addAll(outdata)
                 buffCount += shData.size
                 if (buffCount == shData.size*8){
-                    val f = get_dom_freq(newArray.toShortArray())
-                    note_classifierTWO(f)
-                    //Log.d("freq", f.toString())
-                    newArray.clear()
+                    //call processing/feature extraction
+                    val f = get_fund_freq(tempArray.toShortArray())
+                    note_classifier(f)
+                    tempArray.clear()
                     buffCount=0
                 }
-                //val avg = shData.average()
-           /*     Log.d("RECORD", ("${(((buffCount.toFloat() * 2) / samplingRate.toFloat())).toString()}, ${avg.toString()}"))
-                //Log.d("time", (((buffCount.toFloat() * 2) / samplingRate.toFloat())).toString())
-                //Log.d("avg", avg.toString())
-                try {
-                    outputStream.write(("${(((buffCount.toFloat() * 2) / samplingRate.toFloat())).toString()}, ${avg.toString()}\n").toByteArray())
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }*/
-
+            //collect average amp for .03 seconds, this is used to recognize when a note is strung
+                //collecting average for more manageable # of data points for processing
+                val avg = shData.average()
+                avgArray.add(avg)
             }
         }
-        //audioByteArray = baos.toByteArray()
-        val finalShortArray = newArray.toShortArray()
-      //  outputStream.close()
-      /*  val new = finalShortArray[0].toDouble()
-        Log.d("finalShortArray[0] as short", finalShortArray[0].toString())
-        Log.d("finalShortArray[0] as double", new.toString())
-        val newTwo = finalShortArray[0] * 1.0
-        Log.d("finalShortArray[0] *1.0", newTwo.toString())
-        Log.d("newTwo type", newTwo::class.simpleName.toString())*/
+        //eval any remaining audio data here
+        if (tempArray.size>0){
+            //call processing/feature extraction
+            val f = get_fund_freq(tempArray.toShortArray())
+            note_classifier(f)
+        }
 
-
-    /*    Log.d("byte array", audioByteArray.contentToString())
-        Log.d("byte array length", audioByteArray?.size.toString())
-        Log.d("average", audioByteArray?.average().toString())
-        Log.d("distinct", audioByteArray?.distinct().toString())
-        Log.d("time?", (audioByteArray?.size!!.toFloat()/samplingRate.toFloat()).toString())
-
-        Log.d("Short array", finalShortArray.contentToString())
-        Log.d("Short array length", finalShortArray.size.toString())
-        Log.d("average", finalShortArray.average().toString())
-        Log.d("distinct", finalShortArray.distinct().toString())
-        Log.d("time?", (((finalShortArray.size.toFloat()*2)/samplingRate.toFloat())).toString())*/
-
-        val f = get_dom_freq(finalShortArray)
-        note_classifier(f)
-        //(f.toString() + "Hz").also { text.text = it }
+        //check note strung events
+        note_event_evaluation(avgArray.toDoubleArray())
 
     }
 
 
-    //FEATURE EXTRACTION -- FFT THEN EXTRACT DOMINANT/HIGHEST AMP FREQ FOR NOTE CLASSIFICATION
-    private fun get_dom_freq(short: ShortArray): Double{
-       //FFT
+    //PROCESSING AND FEATURE EXTRACTION -- FFT THEN EXTRACT DOMINANT/HIGHEST AMP FREQ FOR NOTE CLASSIFICATION
+    private fun get_fund_freq(short: ShortArray): Double{
+       //get signal ready for functions by converting to double array
         val signal = mutableListOf<Double>()
         short.mapTo(signal) {it * 1.0 }
         val output = signal.toDoubleArray()
-        val ft: _Fourier = FastFourier(output)
+
+        //filter using bandpass filter to focus on ukulele notes frquency range
+        val flt = Butterworth(output, samplingRate*1.0) //signal is of type double[]
+        val result: DoubleArray =
+            flt.bandPassFilter(3, 200.0, 800.0) //get the result after filtering
+
+        //FFT
+        val ft: _Fourier = FastFourier(result)
         ft.transform()
         val onlyPositive = false
-        val out = ft.getMagnitude(onlyPositive) //Full Absolute
+        val out = ft.getMagnitude(onlyPositive)
 
-        //get dom freq
+
+        //get fundamental freq
         val freqs = get_fftFreq(out.size)
         val m = out.maxOrNull()
         if (m!=null){
             val freq = freqs[out.indexOfFirst { it == m }]
             val freq_hertz = abs(freq*samplingRate)
-            Log.d("freq_hertz", freq_hertz.toString())
             return freq_hertz
         } else{
             return -1.0
@@ -175,7 +143,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     //based off of numpy's fft.fftfreq function
-    //assist with DOM FREQ FEATURE EXTRACTION
+    //assist with FUND FREQ FEATURE EXTRACTION
     private fun get_fftFreq(size: Int): DoubleArray{
         val value = 1.0/size
         val output = mutableListOf<Double>()
@@ -193,39 +161,6 @@ class MainActivity : AppCompatActivity() {
 
     //classify notes --- need to clean up, binary decision tree?
     private fun note_classifier(freq: Double){
-        if (freq>=370) {
-            if (freq >= 465) {
-                if (freq >= 480 && freq <= 540) {
-                    text.text = "C"
-                } else {
-                    text.text = "B"
-                }
-            } else {
-                if (freq>= 416){
-                    text.text = "A"
-                } else {
-                    text.text = "G"
-                }
-            }
-        } else {
-            if (freq>=312){
-                if(freq>=339){
-                    text.text = "F"
-                } else {
-                    text.text = "E"
-                }
-            } else {
-                if (freq>=250 && freq<276){
-                    text.text= "C"
-                } else {
-                    text.text = "D"
-                }
-            }
-        }
-    }
-
-
-    private fun note_classifierTWO(freq: Double){
         if (freq>=388.13){
             if (freq in 388.13..404.13){
                 text.text="G"
@@ -265,5 +200,39 @@ class MainActivity : AppCompatActivity() {
             }
 
         }
+        //when classifying, add to note array
+        noteArray.add(text.text.toString())
+    }
+
+
+    //FURTHER PROCESSING AND FINAL FEATURE EXTRACTION
+    private fun note_event_evaluation(data: DoubleArray){
+        //use librabry to find spikes in original averaged signal
+        val fp: FindPeak = FindPeak(data)
+        val out: Spike = fp.spikes
+
+        //filter spikes based on left side of peak
+        val outLeftFilterAVG = out.filterByProperty(150.0, 900.0, "left")
+
+        //check if spike is more than 10 apart -- if so add
+        val outIndexArray = mutableListOf<Int>()
+        outIndexArray.add(outLeftFilterAVG[0])
+        for (i in 1 until outLeftFilterAVG.size){
+            if (outLeftFilterAVG[i]-outLeftFilterAVG[i-1] >10){
+                outIndexArray.add(outLeftFilterAVG[i])
+            }
+        }
+
+        //use updated spikes array to find the related note
+        val finalNoteArray = mutableListOf<String>()
+        for (i in 0 until outIndexArray.size){
+            val t = outIndexArray[i]*.03
+            var index = kotlin.math.floor(t / .24).toInt()
+            finalNoteArray.add(noteArray[index])
+        }
+
+        notesText.text = finalNoteArray.toString()
+        noteArray.clear()
+        shortAudioDataArray.clear()
     }
 }
